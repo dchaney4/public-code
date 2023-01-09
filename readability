@@ -1,0 +1,116 @@
+#include <cs50.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
+
+//Prompt for string
+//Count words in string
+//Count letters in string
+//Calculate average letters per 100 words (L)
+//Count sentences in string
+//Calculate average sentences per 100 words (S)
+//Run Coleman-Liau index ( index = 0.0588 * L - 0.296 * S - 15.8)
+//Output reading level
+float count_letters(string text);
+float count_words(string text);
+float count_sentences(string text);
+float average_letters(float letters, float words);
+float average_words(float sentences, float words);
+float coleman_liau_index(float L, float S);
+
+int main(void)
+{
+    //Text input
+    string text = get_string("Text: ");
+    //Count letters in text string
+    float letters = count_letters(text);
+    //Count words
+    float words = count_words(text);
+    //Count sentences
+    float sentences = count_sentences(text);
+    //Average letters
+    float L = average_letters(letters, words);
+    //Average words
+    float S = average_words(sentences, words);
+    //Index
+    float index = coleman_liau_index(L, S);
+    //Convert index to reading level and print
+    if (index < 1)
+    {
+        printf ("Before Grade 1\n");
+    }
+    else if (index >= 16)
+    {
+        printf ("Grade 16+\n");
+    }
+    else
+    {
+        int index_rounded = round(index);
+        printf ("Grade %i\n", index_rounded);
+    }
+}
+
+//Count Letters Function
+float count_letters(string text)
+{
+    float letters = 0;
+    for (int i = 0, n = strlen(text); i < n; i++)
+    {
+        //Check if alphabet letter
+        if (isalpha(text[i]))
+        {
+            letters++;
+        }
+    }
+    return letters;
+}
+
+float count_words(string text)
+{
+    float words = 0;
+    for (int i = 0, n = strlen(text) + 1; i < n; i++)
+    {
+        //Check for spaces
+        if (text[i] == ' ' || text[i] == '\0')
+        {
+            words++;
+        }
+    }
+    return words;
+}
+
+float count_sentences(string text)
+{
+    float sentences = 0;
+    for (int i = 0, n = strlen(text) + 1; i < n; i++)
+    {
+        //Check for punctuation
+        if (text[i] == '!' || text[i] == '.' || text[i] == '?')
+        {
+            sentences++;
+        }
+    }
+    return sentences;
+}
+
+float average_letters(float letters, float words)
+{
+    float L;
+    L = (letters / words) * 100.0;
+    return L;
+}
+
+float average_words(float sentences, float words)
+{
+    float S;
+    S = (sentences / words) * 100.0;
+    return S;
+}
+
+float coleman_liau_index(float L, float S)
+{
+    float index;
+    index = 0.0588 * L - 0.296 * S - 15.8;
+    return index;
+}
